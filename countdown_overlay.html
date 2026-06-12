@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Service Countdown Overlay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+
+  /* =====================================================
+     EDIT THESE SETTINGS
+     ===================================================== */
+  :root {
+    --label-bg: #BFE3F0;     /* light blue background for "SERVICE STARTS" */
+    --label-color: #4B5E3A;  /* army green text */
+    --box-bg: #8E2A4C;       /* dark pink countdown boxes */
+    --box-color: #F7C7D9;    /* light pink numbers */
+    --unit-color: #FBEFE0;   /* cream for unit labels (HRS/MIN/SEC) */
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+  }
+
+  .overlay {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    background: transparent;
+  }
+
+  .label {
+    background-color: var(--label-bg);
+    color: var(--label-color);
+    font-weight: 700; /* Poppins Bold */
+    font-size: 3vw;
+    letter-spacing: 0.15em;
+    padding: 0.6em 1.6em;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+
+  .countdown {
+    display: flex;
+    gap: 1.5vw;
+  }
+
+  .unit-box {
+    background-color: var(--box-bg);
+    color: var(--box-color);
+    border-radius: 24px;
+    padding: 1.2vw 2vw;
+    min-width: 7vw;
+    text-align: center;
+    font-weight: 700; /* Poppins Bold */
+  }
+
+  .unit-box .value {
+    font-size: 5vw;
+    line-height: 1;
+    display: block;
+  }
+
+  .unit-box .unit-label {
+    font-size: 1.2vw;
+    letter-spacing: 0.2em;
+    color: var(--unit-color);
+    font-weight: 600;
+    margin-top: 0.4vw;
+    display: block;
+    text-transform: uppercase;
+  }
+
+  .finished {
+    font-size: 4vw;
+    font-weight: 600;
+    color: var(--label-color);
+    background-color: var(--label-bg);
+    padding: 0.6em 1.6em;
+    border-radius: 999px;
+  }
+
+  .seat-message {
+    background-color: var(--label-bg);
+    color: var(--label-color);
+    font-weight: 700;
+    font-size: 1.8vw;
+    letter-spacing: 0.08em;
+    padding: 0.6em 1.4em;
+    border-radius: 24px;
+    text-transform: uppercase;
+    text-align: center;
+    max-width: 70vw;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="overlay">
+  <div class="label" id="label">Service Starts</div>
+  <div class="seat-message" id="seat-message" style="display:none;">
+    Please find your seat in the sanctuary, service is about to begin
+  </div>
+  <div class="countdown" id="countdown">
+    <div class="unit-box">
+      <span class="value" id="hours">00</span>
+      <span class="unit-label">Hours</span>
+    </div>
+    <div class="unit-box">
+      <span class="value" id="minutes">00</span>
+      <span class="unit-label">Min</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* =====================================================
+     SET YOUR SERVICE TIME HERE
+     This is a ONE-TIME target: tomorrow at 6:30 PM (18:30),
+     based on the LOCAL TIME of the device/browser
+     displaying this page (the Yodeck player).
+
+     To change the time, edit the hours/minutes below
+     (24-hour clock). To change the date, edit the "+ 1"
+     in setDate (e.g. "+ 0" for today, "+ 2" for the day
+     after tomorrow).
+     ===================================================== */
+
+  const targetTime = new Date();
+  targetTime.setHours(18, 30, 0, 0); // 6:30 PM today
+
+  const FIVE_MINUTES = 5 * 60; // seconds
+
+  function updateCountdown() {
+    const now = new Date();
+    const diff = targetTime - now;
+    const countdownEl = document.getElementById('countdown');
+    const labelEl = document.getElementById('label');
+    const seatMsgEl = document.getElementById('seat-message');
+
+    if (diff <= 0) {
+      labelEl.textContent = 'Service Is In Session';
+      seatMsgEl.style.display = 'none';
+      countdownEl.style.display = 'none';
+      return;
+    }
+
+    const totalSeconds = Math.floor(diff / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+    document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+    document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+
+    if (totalSeconds <= FIVE_MINUTES) {
+      seatMsgEl.style.display = 'block';
+    } else {
+      seatMsgEl.style.display = 'none';
+    }
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
+
+</body>
+</html>
