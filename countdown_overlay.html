@@ -87,7 +87,7 @@
   function getNextTarget() {
     const now = new Date();
     const target = new Date();
-    target.setHours(13, 15, 0, 0); // 1:15 PM
+    target.setHours(13, 0, 0, 0); // 1:00 PM
 
     if (target <= now) {
       target.setDate(target.getDate() + 1);
